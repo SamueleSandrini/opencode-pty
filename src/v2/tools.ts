@@ -43,6 +43,7 @@ export function registerV2Tools(draft: ToolDraft): void {
       name,
       description: definition.description,
       input: tool.schema.toJSONSchema(tool.schema.object(definition.args)),
+      options: { codemode: false },
       execute: async (input, context) => {
         const result = await definition.execute(input as never, context as never)
         return typeof result === 'string' ? { content: result } : result

@@ -50,6 +50,10 @@ export interface ToolInfoV2 {
   name: string
   description: string
   input: unknown
+  options?: {
+    codemode?: boolean
+    pinned?: boolean
+  }
   execute: (input: unknown, context: unknown) => Promise<unknown>
 }
 
