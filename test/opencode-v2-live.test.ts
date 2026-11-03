@@ -65,8 +65,6 @@ describe('OpenCode V2 Live Integration', () => {
 
     let commandTransformCalled = false
     let toolTransformCalled = false
-    let commandReloadCalled = false
-    let toolReloadCalled = false
     const simulatedContext: PluginContextV2 = {
       options: {
         port: 48999,
@@ -77,18 +75,14 @@ describe('OpenCode V2 Live Integration', () => {
           commandTransformCalled = true
           await callback(commandDraft)
         },
-        reload: async () => {
-          commandReloadCalled = true
-        },
+        reload: async () => {},
       },
       tool: {
         transform: async (callback) => {
           toolTransformCalled = true
           await callback(toolDraft)
         },
-        reload: async () => {
-          toolReloadCalled = true
-        },
+        reload: async () => {},
       },
       session: {
         prompt: async () => ({}) as never,
@@ -99,7 +93,6 @@ describe('OpenCode V2 Live Integration', () => {
     await Plugin.setup(simulatedContext)
 
     expect(toolTransformCalled).toBe(true)
-    expect(toolReloadCalled).toBe(true)
     expect(Object.keys(registeredTools).sort()).toEqual([
       'pty_kill',
       'pty_list',
@@ -112,7 +105,6 @@ describe('OpenCode V2 Live Integration', () => {
     )
 
     expect(commandTransformCalled).toBe(true)
-    expect(commandReloadCalled).toBe(true)
     expect(registeredCommands[PTY_OPEN_CLIENT_COMMAND]?.description).toBe(
       'Open PTY Sessions Web Interface'
     )

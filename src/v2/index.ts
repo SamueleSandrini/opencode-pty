@@ -38,7 +38,6 @@ export const Plugin: PluginV2 = define({
       await ctx.tool.transform((draft) => {
         registerV2Tools(draft)
       })
-      await ctx.tool.reload?.()
     }
 
     // The project directory lives on `location`. `ctx.worktree` is deliberately
@@ -57,7 +56,6 @@ export const Plugin: PluginV2 = define({
       await ctx.command.transform((draft) => {
         registerV2Commands(draft, serverOptions)
       })
-      await ctx.command.reload?.()
     }
 
     if (ctx.options?.autostart) {
