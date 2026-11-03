@@ -144,6 +144,46 @@ describe('OpenCode V2 Plugin API', () => {
       expect(active?.server.url.hostname).toBe('127.0.0.1')
     })
 
+    it('keeps tools registered when the autostart port is already in use', async () => {
+      const blocker = Bun.serve({
+        hostname: '127.0.0.1',
+        port: 0,
+        fetch: () => new Response('occupied'),
+      })
+      const registeredTools: Record<string, ToolInfoV2> = {}
+      const ctx: PluginContextV2 = {
+        options: {
+          autostart: true,
+          hostname: '127.0.0.1',
+          port: blocker.port,
+        },
+        tool: {
+          transform: async (callback) => {
+            callback({
+              add: (tool) => {
+                registeredTools[tool.name] = tool
+              },
+            })
+          },
+        },
+      }
+
+      try {
+        await Plugin.setup(ctx)
+      } finally {
+        blocker.stop(true)
+      }
+
+      expect(Object.keys(registeredTools).sort()).toEqual([
+        'pty_kill',
+        'pty_list',
+        'pty_read',
+        'pty_spawn',
+        'pty_write',
+      ])
+      expect(getActiveServer()).toBeNull()
+    })
+
     it('shows server URL via handleShowServerUrlCommand', async () => {
       const message = await handleShowServerUrlCommand({ hostname: '127.0.0.1' })
       expect(message).toContain('PTY Sessions Web Interface URL: http://127.0.0.1:')

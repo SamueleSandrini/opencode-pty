@@ -59,7 +59,15 @@ export const Plugin: PluginV2 = define({
     }
 
     if (ctx.options?.autostart) {
-      await getOrCreateServer(serverOptions)
+      try {
+        await getOrCreateServer(serverOptions)
+      } catch (error) {
+        // The observer is optional. OpenCode can load this plugin in multiple
+        // isolated location runtimes, and only one of them can own a fixed
+        // port. Keep the location's PTY tools registered when autostart cannot
+        // bind the observer.
+        console.warn('[opencode-pty] web observer autostart failed:', error)
+      }
     }
   },
 })
