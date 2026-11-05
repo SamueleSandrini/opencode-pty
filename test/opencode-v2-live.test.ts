@@ -156,9 +156,10 @@ describe('OpenCode V2 Live Integration', () => {
 
     const prompt = prompts[0]
     expect(prompt).toBeDefined()
-    // Delivered to the spawning session with a deterministic, idempotent id.
+    // Delivered to the spawning session; OpenCode generates a valid ordered
+    // message id when the optional id is omitted.
     expect(prompt?.sessionID).toBe('ses_parent')
-    expect(prompt?.id).toBe(`msg_${spawned.id}_exited`)
+    expect(prompt?.id).toBeNull()
     expect(prompt?.text).toContain('<pty_exited>')
     expect(prompt?.text).toContain(`ID: ${spawned.id}`)
     expect(prompt?.text).toContain('Exit Code: 3')
