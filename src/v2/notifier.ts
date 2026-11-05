@@ -17,7 +17,7 @@ export type V2SessionPrompt = Pick<Plugin.Context['session'], 'prompt'>
  * Delivers `<pty_exited>` notifications through opencode v2's plugin context.
  *
  * The notification is admitted as a user prompt with a deterministic message
- * id (`pty_<id>_exited`), so `admission.reconcile` makes repeated deliveries
+ * id (`msg_<pty-id>_exited`), so `admission.reconcile` makes repeated deliveries
  * idempotent (e.g. when a kill races the process exit). Default delivery
  * (`steer`) plus `execution.wake` starts a new agent turn, and opencode
  * resolves the run with the session's *current* model — so the user's model
@@ -41,7 +41,7 @@ export class V2SessionNotifier implements SessionNotifier {
     try {
       await this.session.prompt({
         sessionID: session.parentSessionId,
-        id: `pty_${session.id}_exited`,
+        id: `msg_${session.id}_exited`,
         text,
       })
     } catch (error) {
